@@ -8,4 +8,4 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Welcome to Jessica's Project Homepage!
+Welcome to Jessica's class page!
