@@ -75,7 +75,7 @@ matrix(data=somedata,nrow=4, ncol=4, byrow=FALSE)
 matrix(data=somedata, nrow=4, ncol=4, byrow=TRUE)
 ```
 ### Data Frames
-while matrices require all of it's elements to be of the same data type, data frames can contain different data types for which the varibales of the dataset are the columns and the observations are the rows. 
+While matrices require all of it's elements to be of the same data type, data frames can contain different data types for which the varibales of the dataset are the columns and the observations are the rows. 
 Data frames can be created manually through specification of the data inside. However, reading csv files in r also creates data frames. We can use the `class` function to check this.
 ```{r, echo=TRUE}
 class(ginkgo)
@@ -250,9 +250,9 @@ pbinom(q=3, size=6, prob= 2/3,lower.tail=TRUE)
 ```
 
 ### `qbinom()`
-The `qbinom()` function returns the quantile function of the binomial distribution. For example if we wanted to find the 25th quantile of a binomial distribution with 5 trails and the probability of success of each trail is 0.2, we could use the following syntax:
+The `qbinom()` function returns the quantile function of the binomial distribution. For example if we wanted to find the 25th quantile of a binomial distribution with 15 trails and the probability of success of each trail is 0.6 we could use the following syntax:
 ```{r,echo=TRUE}
-qbinom(0.25, size=5, prob=0.2)
+qbinom(0.25, size=15, prob=0.6)
 ```
 
 
