@@ -1,0 +1,260 @@
+---
+title: "Final R Reference Guide"
+author: "Jessica Martinez"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+<style>
+  .nav-pills>li>a:hover, .nav-pills>li>a:focus, .nav-pills>li.active>a,     .nav-pills>li.active>a:hover, .nav-pills>li.active>a:focus{
+    background-color: #269067;
+  }
+</style>
+
+
+# R Reference Guide {.tabset .tabset-pills}
+## **Loading Data and Packages**
+
+The `here` package in R is the preferred alternative to using `setwd()`. R utilizes your computer's working directory to locate file resources. The `setwd()` function changes the working directory that R looks in, and is very dependent on the way you organize the files on your computer. The `here` package provides a much simpler solution to file referencing with R, utilizing the directory your project is set to to build paths to files. 
+
+All packages in R must be installed in order for them to execute properly. The function `here` is used in conjunction with `read.csv` to read the file into a dataframe in your R workspace. The following example  of using the `here` and the `read.csv` functions will use the 2021 ginkgo data collected in class.
+
+This example assumes that the `here` package is already installed in R. (If not, use the syntax `install.packages(here)`). The RProject directory is located in a folder named 'enviornmental_data'. The 2021 gingko data is located in the 'data' subdirectory of the RProject folder. We'll assign the read data frame to the name "ginkgo". 
+
+
+```{r, echo=TRUE}
+require (here)
+ginkgo=read.csv(here("data", "ginkgo_data_2022.csv"))
+```
+Since this is a relatively large data frame, we can use `head` to display only the first few rows. 
+```{r,echo=TRUE}
+head(ginkgo)
+```
+</p>
+
+
+## **Data Structures** {.tabset .tabset-pills}
+###  `c()` 
+The function `c()` *combines* its arguments into a vector. As a reminder, a vector is a 1-dimensional data structure consisting of 1 or more elements.) Using the `c()` function requires that all incorporated elements to be of the same data type (that is, it is unable to combine character and numeric types in the same call to `c()`)
+
+The following example uses the `c()` function for numeric data types and character data types. 
+```{r, echo=TRUE}
+## create a vector of numbers: 
+num_vec= c(1, 2, 3, 4, 5)
+
+## create a vector of characters: 
+char_vec= c("R", "is", "groovy") 
+```
+the contents of the created vector can be shown by using the `print()` function or by simply typing the vectors name. 
+```{r, echo=TRUE}
+## using the print () function will print the contents of the vector
+print(num_vec)
+##typing the name of the vector will acheive the same thing
+char_vec
+```
+### `length()` 
+The function `length()` returns the number of elements within a vector. We will use the previously created vector of numbers (num_vec) and characters (char_vec) to visualize its functionality. 
+```{r, echo=TRUE}
+##Since char_vec contains three words, the length function will return the number of strings it contains
+length(char_vec)
+##For num_vec, the length() function rather returns the number of numeric elements rather than the number of character elements as it did for char_vec
+length(num_vec)
+```
+### `matrix ()` 
+The matrix function creates a two dimensional data structure from a set of values. Matrices store data in rows and columns, and the elements of a matrix must be the same data type.  
+The matrix function requires specification of the data, number of rows (`nrow`), number of columns (`ncol`) and whether the matrix is filled by rows (`byrow`). 
+```{r, echo=TRUE}
+somedata = c(1,2,3,4,5,6,7,8)
+##when byrow=FALSE (the default)the matrix is filled by columns 
+matrix(data=somedata,nrow=4, ncol=4, byrow=FALSE)
+
+##when byrow=TRUE, the matrix is filled by rows
+matrix(data=somedata, nrow=4, ncol=4, byrow=TRUE)
+```
+### Data Frames
+while matrices require all of it's elements to be of the same data type, data frames can contain different data types for which the varibales of the dataset are the columns and the observations are the rows. 
+Data frames can be created manually through specification of the data inside. However, reading csv files in r also creates data frames. We can use the `class` function to check this.
+```{r, echo=TRUE}
+class(ginkgo)
+data.frame()
+```
+### `nrow()`, `ncol()`\n& `dim()` 
+`nrow()` will return the number of rows while `ncol()` will return the number of columns in a data frame or matrix.
+```{r, echo=TRUE}
+#number of rows in the ginkgo data frame
+nrow(ginkgo)
+#number of columns in the gingko data frame
+ncol(ginkgo)
+```
+The `dim` function returns the dimensions of a data frame, array or matrix. In a sense it combines the output from `nrow` and `ncol` into one return. 
+```{r, echo=TRUE}
+dim(ginkgo)
+```
+## **Subsetting**
+Subsetting is a way to select certain numeric or character elements from a matrix or data frame. 
+
+We can use `$` to subset the data frame by name. Using the gingko data frame as an example, if we wanted to subset the 'petitole length' column we would use the following syntax.
+```{r, echo=TRUE}
+ginkgo$petiole_length
+```
+To subset a specific position within a data frame or matrix you would instead use `[]`. If you wanted to select the first element in the thrid row (max_depth) of the ginkgo data set, you would use syntax below
+```{r, echo=TRUE}
+ginkgo[1,3]
+```
+If you only needed the first three columns of the first three rows (site_id, seeds_present and max_width), you would instead use: 
+```{r, echo=TRUE}
+ginkgo[1:3,1:3]
+```
+## **Numerical Data Exploration** {.tabset .tabset-pills}
+### `summary()`
+The `summary` function can be used to display summary statistics of data columns within a data frame or  matrix or can also be used to display summary results of varying functions of model fitting. Using the gingko data, `summary` can be used to investigate the summary statistics of 'max_depth' column of the data frame. 
+```{r, echo=TRUE}
+#recall we must subset the max_depth column by name
+summary(ginkgo$max_depth)
+```
+these can be compared to the summary statistics of the max_width column
+```{r, echo=TRUE}
+summary(ginkgo$max_width)
+```
+### `mean()`
+The `mean` function returns the arithmetic mean of a specified r object (x). To calculate the mean notch depth of ginkgo leaves, the following syntax would be used: 
+```{r, echo=TRUE}
+mean(ginkgo$notch_depth)
+```
+
+### `sd()`
+The `sd()` function calculates the standard deviation of the provided values of "x".  The syntax for this function is `sd(x, na.rm=FALSE)` for which `x` is an R object or a numeric vector and `na.rm` is the logical statement of whether missing values should be removed (FALSE is default). 
+Calculation of notch depth of ginkgo leaves is exemplified below.
+```{r, echo=TRUE}
+sd(ginkgo$notch_depth)
+```
+## **Graphical Data Exploration**{.tabset .tabset-pills}
+### `plot()`
+The `plot()` function is used in r to graph (or "plot") specified parameters. Below is a brief overview of different `plot`arguments.  To visualize these arguments a scatter plot using the ginkgo data will be created.  This plot will visualize the max leaf depth column  on the x axis and the leaf depth column on the y axis.
+
+ * `col =` specifies the color. Specification of hex value or name is accepted.
+ * `pch=` specifies the shape of the plot markers. `pch =` ranges from accepted values of 0-25. For example, using `pch= 20` would return a small filled circle. 
+ * `cex =` indicates the size of the markers. For example `cex = 0.3` would make the markers 30% smaller while `cex = 1.3` would make the markers 30% larger.
+ * `main =` the title of the plot
+ * `xlab =` the x-axis label
+ * `ylab =` the y-axis label
+ * `xlim =` the range (or limit) of the x-axis
+ * `ylim =` the range (or limit) of the y-axis
+```{r, echo=TRUE}
+plot(ginkgo$max_depth, ginkgo$max_width,
+      col="orange",
+      pch= 20,
+      cex=0.8,
+      main="Plot of Ginkgo max leaf depth and max leaf width",
+      xlim= c(20,140),
+      ylim= c(40, 150),
+      xlab="max_depth",
+      ylab="max_width",
+      )
+```
+
+### `hist()`
+The `hist()` function creates a histogram of inputted values.  The `breaks` argument specifies the number of bins of the histogram. Using the R palmerpenguins data package, the syntax of a histogram of penguin flipper lengths will be used to exemplify this data exploration function. 
+
+```{r, echo=TRUE}
+##since palmerpenguins is an R provided dataset, we can use require to load the package into the work space.
+
+require(palmerpenguins)
+##we can subset the flipper length column by its name using "$"
+hist(penguins$flipper_length_mm, breaks = 5, 
+     xlab= "flipper length mm",
+     main= "Histogram of Penguin Flipper Lengths")
+```
+
+### `boxplot()`
+The `boxplot` function in R can be used to visualize distributions of specified data values. To visualize this two examples will be provided using the ginkgo data. First, a simple boxplot of ginkgo petiole lengths can be used to visualize the distribution of the data column individually. 
+```{r, echo=TRUE}
+boxplot(ginkgo$petiole_length,
+        main= "Boxplot of Ginkgo Petiole Length")
+```
+
+A conditional boxplot can also be created with the `boxplot` function for which the data is conditioned on another column. For example, to create a boxplot of ginkgo petiole lengths conditioned on the seeds_present column, the following syntax can be used. Note subsetting can be used, as shown in the first example or the column can be specified individually alongside `data=`
+
+```{r, echo=TRUE }
+
+boxplot(petiole_length~seeds_present, data = ginkgo,
+        main= "Boxplot of Ginkgo Petiole Length conditioned on Seeds Present", 
+        xlab= "seeds present",
+        ylab= "petiole length")
+
+```
+
+### `par()`
+The `par(mfrow)` function allows you to put multiple plots into one single figure. `mfrow` determines the number of rows and columns for the figure grid. `par(mfrow)` must be placed before the creation of the encompassed plots, as visualized by the syntax below. Here, a four panel figure of histograms is arranged in a 2 x 2 grid using the penguin data. 
+
+```{r, echo=TRUE}
+require(palmerpenguins)
+par(mfrow=c(2,2))
+hist(penguins$bill_length_mm,
+     main= "Histogram of Penguin Bill Lengths",
+     xlab="bill length mm",
+     col="#9ebb0c"
+)
+hist(penguins$bill_depth_mm,
+     main="Histogram of Penguin Bill Depth",
+     xlab= "bill depth mm",
+     col= "#0db566")
+hist(penguins$flipper_length_mm,
+     main="Histogram of Penguin Flipper Length", 
+     xlab="flipper length mm", 
+     col="#1faba9")
+hist(penguins$body_mass_g, 
+     main="Histogram of Penguin Body Mass",
+     xlab="body mass g",
+     col="#FF5733")
+```
+
+## **Distribution Functions**{.tabset .tabset-pills}
+### `dnorm()`
+The `dnorm()` function returns the density of the normal distribution.`dnorm` is generated based off of user specification of mean and sd. For example, you could use `dnorm` to determine whether you are more likely to observe a value of 1 or 2.
+```{r, echo=TRUE}
+dnorm(1, mean=0, sd=1)
+```
+```{r, echo=TRUE}
+dnorm(2, mean=0, sd=1)
+```
+From this we can conclude that we are more likely to observe a value of 1. 
+
+### `pnorm()`
+The `pnorm()` function returns the cumulative density of a normal distribution. For example, `pnorm()` can be used if you wanted to know the probability of observing a value of 0.75 or less from a standard normal distribution. 
+```{r, echo=TRUE}
+pnorm(0.75, mean=0, sd=1)
+```
+
+### `qnorm()`
+The `qnorm()` function returns the quantile function of the normal distribution.It is essentially the inverse value of the cumulative density function of a normal distribution. For example, if we wanted to calculate the quantile of the normal distribution at a cumulative density of 25% (0.25), we could use the following syntax: 
+```{r, echo=TRUE}
+qnorm(0.25, mean=0, sd=1)
+```
+
+### `dbinom()`
+The `dbinom` function returns the density of the binomial distribution. Binomial distributions have two parameters, n (the number of trials) and p (the probability of success of each trial). In class we used the hypothetical forest plot scenario for understanding probabilities. In this scenario, there are a total of 6 plots and birds are usually observed in 2/3rds of the plots. We can use `dbinom` to calculate the probability of observing birds in exactly 3 of the 6 patches. 
+```{r, echo=TRUE}
+dbinom(x=3, size=6, prob=2/3)
+
+```
+
+### `pbinom()`
+The `pbinom()` function returns the distribution function of the binomial distribution. Using the same forest plot scenario explained for `dbinom` we can use `pbinom` to calculate the probability of observing 3 or fewer presences within the 6 plots. The following syntax would be used: 
+```{r, echo=TRUE}
+
+pbinom(q=3, size=6, prob= 2/3,lower.tail=TRUE)
+```
+
+### `qbinom()`
+The `qbinom()` function returns the quantile function of the binomial distribution. For example if we wanted to find the 25th quantile of a binomial distribution with 5 trails and the probability of success of each trail is 0.2, we could use the following syntax:
+```{r,echo=TRUE}
+qbinom(0.25, size=5, prob=0.2)
+```
+
+
+
+
